@@ -54,19 +54,24 @@ export default function Converter() {
     // converter component allowing user to enter amt in EUR and display converted Value in USD
     return (
         <>
-            <div id = "converter">
-                <div id = "conversion-calculator">
-                    <FxRate fxRate = {fxRate} setFxRate = {setFxRate} editFx = {editFx} setEditFx = {setEditFx}/>
-                    <input 
-                        id = "currency-top" 
-                        type = "number"
-                        value = {currentCurrency === "EUR" ? initialCurrency : Number((initialCurrency * fxRate).toFixed(2))}
-                        onChange = {(e) => {setInitialCurrency(Number(e.target.value))}}
-                    >
-                    </input>
-                    <div id = "currency-bottom">{currentCurrency === "USD" ? initialCurrency : Number((initialCurrency * fxRate).toFixed(2))}</div>
-                    <Switch setCurrency = {setCurrency}/>
-                </div>
+            <div id = "conversion-calculator">
+                <FxRate fxRate = {fxRate} setFxRate = {setFxRate} editFx = {editFx} setEditFx = {setEditFx}/>
+                <div id = "current-currency">{currentCurrency}</div>
+                <input 
+                    id = "currency-top" 
+                    type = "number"
+                    value = {currentCurrency === "EUR" ? initialCurrency: Number((initialCurrency * fxRate).toFixed(2))}
+                    onChange = {(e) => {setInitialCurrency(Number(e.target.value))}}
+                >
+                </input>
+                
+                <input 
+                    id = "currency-bottom" 
+                    type = "number" 
+                    value ={currentCurrency === "USD" ? initialCurrency : Number((initialCurrency * fxRate).toFixed(2))} 
+                    readOnly = "true">
+                </input>
+                <Switch setCurrency = {setCurrency}/>
             </div>
             <HistoricalTable history = {history} />
         </>

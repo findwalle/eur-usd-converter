@@ -3,8 +3,8 @@ export default function Switch(props) {
 
     return (
         <div id = "switch-holder">
-            <button id = "eur-button" type = "button" onClick = {() => setCurrency('EUR')}>EUR</button>
-            <button id = "usd-button" type = "button" onClick = {() => setCurrency('USD')}>USD</button>
+            <button className = "currency-button" type = "button" onClick = {() => setCurrency('EUR')}>EUR</button>
+            <button className = "currency-button" type = "button" onClick = {() => setCurrency('USD')}>USD</button>
         </div>
     )
 }

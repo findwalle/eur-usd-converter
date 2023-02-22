@@ -27,7 +27,7 @@ export default function FxRate(props) {
             >
             </input>
             <button 
-                id = "fx_override-button" 
+                id = "fx-override-button" 
                 type = "button"
                 onClick = {() => {
                     setEditFx(!editFx)
