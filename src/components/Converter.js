@@ -2,12 +2,19 @@ import { useState, useEffect } from "react";
 
 import Switch from './Switch';
 import FxRate from './FxRate';
+import HistoricalTable from "./HistoricalTable";
 
 export default function Converter() {
     const [currentCurrency, setCurrency] = useState("EUR");
     const [initialCurrency, setInitialCurrency] = useState(0);
     const [fxRate, setFxRate] = useState(1.1);
     const [editFx, setEditFx] = useState(false);
+    const [history, setHistory] = useState([[<tr>
+        <th>Fx Rate</th>
+        <th>Override</th>
+        <th>Initial</th>
+        <th>Converted</th>
+    </tr>]]);
 
     // function to grab random value to change initial currency
     const random = () => {
@@ -18,7 +25,7 @@ export default function Converter() {
 
     /// 3 second interval to add random value btwn -0.05 and 0.05 to initialValue
     useEffect(() => {
-        console.log({editFx})
+        // polling
         const interval = setInterval(() => {
             // need to convert to 2 decimal places using toFixed -> which converts to String, need to reconvert
             // to number
@@ -27,24 +34,41 @@ export default function Converter() {
         }, 3000);
 
         return () => clearInterval(interval);
-    })
+    }, [initialCurrency])
+
+    // historical data add
+    useEffect(() => {
+        // console.log(history, editFx)
+        const deepHistory = history.slice()
+        const converted = Number(initialCurrency * fxRate)
+        if (deepHistory.length >= 6) {
+            deepHistory.splice(1, 1)
+        }
+        deepHistory.push([fxRate, String(editFx), 
+            currentCurrency === "EUR" ? Number(initialCurrency).toFixed(2) + "€": converted.toFixed(2) + "$", 
+            currentCurrency === "EUR" ? converted.toFixed(2) + "$ " : Number(initialCurrency).toFixed(2) + "€ "]
+        )
+        setHistory(deepHistory)
+    }, [initialCurrency])
 
     // converter component allowing user to enter amt in EUR and display converted Value in USD
     return (
         <>
             <div id = "converter">
-                <FxRate fxRate = {fxRate} setFxRate = {setFxRate} editFx = {editFx} setEditFx = {setEditFx}/>
-                <input 
-                    id = "currency-top" 
-                    type = "number"
-                    value = {currentCurrency === "EUR" ? initialCurrency : Number((initialCurrency * fxRate).toFixed(2))}
-                    onChange = {(e) => {setInitialCurrency(Number(e.target.value))}}
-                >
-                </input>
-                {/* polling to update USD */}
-                <div id = "currency-bottom">{currentCurrency === "USD" ? initialCurrency : Number((initialCurrency * fxRate).toFixed(2))}</div>
+                <div id = "conversion-calculator">
+                    <FxRate fxRate = {fxRate} setFxRate = {setFxRate} editFx = {editFx} setEditFx = {setEditFx}/>
+                    <input 
+                        id = "currency-top" 
+                        type = "number"
+                        value = {currentCurrency === "EUR" ? initialCurrency : Number((initialCurrency * fxRate).toFixed(2))}
+                        onChange = {(e) => {setInitialCurrency(Number(e.target.value))}}
+                    >
+                    </input>
+                    <div id = "currency-bottom">{currentCurrency === "USD" ? initialCurrency : Number((initialCurrency * fxRate).toFixed(2))}</div>
+                    <Switch setCurrency = {setCurrency}/>
+                </div>
             </div>
-            <Switch setCurrency = {setCurrency}/>
+            <HistoricalTable history = {history} />
         </>
     )
 }
